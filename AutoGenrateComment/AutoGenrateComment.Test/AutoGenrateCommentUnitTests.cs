@@ -1,16 +1,15 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Xunit;
 using VerifyCS = AutoGenrateComment.Test.CSharpCodeFixVerifier<
     AutoGenrateComment.AutoGenrateCommentAnalyzer,
     AutoGenrateComment.AutoGenrateCommentCodeFixProvider>;
 
 namespace AutoGenrateComment.Test
 {
-    [TestClass]
     public class AutoGenrateCommentUnitTest
     {
         //No diagnostics expected to show up
-        [TestMethod]
+        [Fact]
         public async Task TestMethod1()
         {
             var test = @"";
@@ -19,7 +18,7 @@ namespace AutoGenrateComment.Test
         }
 
         //Diagnostic and CodeFix both triggered and checked for
-        [TestMethod]
+        [Fact]
         public async Task TestMethod2()
         {
             var test = @"
