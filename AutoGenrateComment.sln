@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31229.75
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoGenrateComment", "AutoGenrateComment\AutoGenrateComment\AutoGenrateComment.csproj", "{DBC7FFF0-25B4-47D8-B4DB-DB4D133D0579}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoGenrateComment.CodeFixes", "AutoGenrateComment\AutoGenrateComment.CodeFixes\AutoGenrateComment.CodeFixes.csproj", "{D13D6C2C-EA04-48A9-9D5B-D486F3110A1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoGenrateComment.Package", "AutoGenrateComment\AutoGenrateComment.Package\AutoGenrateComment.Package.csproj", "{D3A8D508-B614-4EB0-9706-A96E2C3C2CF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoGenrateComment.Test", "AutoGenrateComment\AutoGenrateComment.Test\AutoGenrateComment.Test.csproj", "{764F1D8C-0C5C-4D94-B998-D90DE8172A4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoGenrateComment.Vsix", "AutoGenrateComment\AutoGenrateComment.Vsix\AutoGenrateComment.Vsix.csproj", "{6DCB0471-A7DD-4E3E-8CC8-D4340DC2203D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DBC7FFF0-25B4-47D8-B4DB-DB4D133D0579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBC7FFF0-25B4-47D8-B4DB-DB4D133D0579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBC7FFF0-25B4-47D8-B4DB-DB4D133D0579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBC7FFF0-25B4-47D8-B4DB-DB4D133D0579}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D13D6C2C-EA04-48A9-9D5B-D486F3110A1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D13D6C2C-EA04-48A9-9D5B-D486F3110A1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D13D6C2C-EA04-48A9-9D5B-D486F3110A1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D13D6C2C-EA04-48A9-9D5B-D486F3110A1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3A8D508-B614-4EB0-9706-A96E2C3C2CF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3A8D508-B614-4EB0-9706-A96E2C3C2CF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3A8D508-B614-4EB0-9706-A96E2C3C2CF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3A8D508-B614-4EB0-9706-A96E2C3C2CF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{764F1D8C-0C5C-4D94-B998-D90DE8172A4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{764F1D8C-0C5C-4D94-B998-D90DE8172A4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{764F1D8C-0C5C-4D94-B998-D90DE8172A4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{764F1D8C-0C5C-4D94-B998-D90DE8172A4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DCB0471-A7DD-4E3E-8CC8-D4340DC2203D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DCB0471-A7DD-4E3E-8CC8-D4340DC2203D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DCB0471-A7DD-4E3E-8CC8-D4340DC2203D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DCB0471-A7DD-4E3E-8CC8-D4340DC2203D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E9B9E1EB-E149-4B6E-9789-00052213163E}
+	EndGlobalSection
+EndGlobal
