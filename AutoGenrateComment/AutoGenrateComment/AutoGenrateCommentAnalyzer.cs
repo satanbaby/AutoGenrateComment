@@ -20,9 +20,9 @@ namespace AutoGenrateComment
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(Resources.AnalyzerTitle), Resources.ResourceManager, typeof(Resources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(Resources.AnalyzerMessageFormat), Resources.ResourceManager, typeof(Resources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.AnalyzerDescription), Resources.ResourceManager, typeof(Resources));
-        private const string Category = "Naming";
+        private const string Category = "AutoGenrateComment";
 
-        private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
+        private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Info, isEnabledByDefault: true, description: Description);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
 
@@ -33,20 +33,39 @@ namespace AutoGenrateComment
 
             // TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
             // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
-            context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+            //context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.InvocationExpression);
         }
 
-        private static void AnalyzeSymbol(SymbolAnalysisContext context)
+        private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            // TODO: Replace the following code with your own analysis, generating Diagnostic objects for any issues you find
-            var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
+            var invocationExpr = (InvocationExpressionSyntax)context.Node;
 
-            // Find just those named type symbols with names containing lowercase letters.
-            if (namedTypeSymbol.Name.ToCharArray().Any(char.IsLower))
+            // invocationExpr.Expression is the expression before "(", here "string.Equals".
+            // In this case it should be a MemberAccessExpressionSyntax, with a member name "Equals"
+            var memberAccessExpr = invocationExpr.Expression as MemberAccessExpressionSyntax;
+            if (memberAccessExpr == null)
+                return;
+
+            if (memberAccessExpr.Name.ToString() != nameof(string.Equals))
+                return;
+
+            // Now we need to get the semantic model of this node to get the type of the node
+            // So, we can check it is of type string whatever the way you define it (string or System.String)
+            var memberSymbol = context.SemanticModel.GetSymbolInfo(memberAccessExpr).Symbol as IMethodSymbol;
+            if (memberSymbol == null)
+                return;
+
+            // Check the method is a member of the class string
+            if (memberSymbol.ContainingType.SpecialType != SpecialType.System_String)
+                return;
+
+            // If there are not 3 arguments, the comparison type is missing => report it
+            // We could improve this validation by checking the types of the arguments, but it would be a little longer for this post.
+            var argumentList = invocationExpr.ArgumentList;
+            if ((argumentList?.Arguments.Count ?? 0) == 2)
             {
-                // For all such symbols, produce a diagnostic.
-                var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name);
-
+                var diagnostic = Diagnostic.Create(Rule, invocationExpr.GetLocation());
                 context.ReportDiagnostic(diagnostic);
             }
         }

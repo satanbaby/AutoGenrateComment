@@ -1,4 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Testing;
+using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.Testing.Verifiers;
+using System.IO;
+using System.Threading.Tasks;
 using Xunit;
 using VerifyCS = AutoGenrateComment.Test.CSharpCodeFixVerifier<
     AutoGenrateComment.AutoGenrateCommentAnalyzer,
@@ -6,53 +11,28 @@ using VerifyCS = AutoGenrateComment.Test.CSharpCodeFixVerifier<
 
 namespace AutoGenrateComment.Test
 {
-    public class AutoGenrateCommentUnitTest
+    public class AutoGenrateCommentUnitTest// : CodeFixVerifier<AutoGenrateCommentAnalyzer, AutoGenrateCommentCodeFixProvider, CSharpCodeFixTest<AutoGenrateCommentAnalyzer, AutoGenrateCommentCodeFixProvider, XUnitVerifier>, XUnitVerifier>
     {
         //No diagnostics expected to show up
         [Fact]
         public async Task TestMethod1()
         {
-            var test = @"";
-
-            await VerifyCS.VerifyAnalyzerAsync(test);
-        }
-
-        //Diagnostic and CodeFix both triggered and checked for
-        [Fact]
-        public async Task TestMethod2()
-        {
             var test = @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
-
-    namespace ConsoleApplication1
+class TypeName
+{
+    public void Test()
     {
-        class {|#0:TypeName|}
-        {   
-        }
-    }";
+        var a = ""fuck you"";
+        string.Equals(a, ""fuck you"");
+    }
+}";
 
-            var fixtest = @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
+            var expected = VerifyCS.Diagnostic("AutoGenrateComment")
+                .WithSpan(7, 9, 7, 37)
+                .WithSeverity(DiagnosticSeverity.Info)
+                .WithMessage("StringComparison is missing");
 
-    namespace ConsoleApplication1
-    {
-        class TYPENAME
-        {   
-        }
-    }";
-
-            var expected = VerifyCS.Diagnostic("AutoGenrateComment").WithLocation(0).WithArguments("TypeName");
-            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+            await VerifyCS.VerifyAnalyzerAsync(test, expected);
         }
     }
 }
