@@ -44,7 +44,7 @@ namespace AutoGenrateComment
             var diagnosticSpan = diagnostic.Location.SourceSpan;
 
             // Find the type declaration identified by the diagnostic.
-            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<InvocationExpressionSyntax>().First();
+            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>().First();
 
             // Register a code action that will invoke the fix.
             context.RegisterCodeFix(
@@ -55,22 +55,79 @@ namespace AutoGenrateComment
                 diagnostic);
         }
 
-        private async Task<Document> FixAsync(Document document, InvocationExpressionSyntax invocationExpr, CancellationToken cancellationToken)
+        private async Task<Document> FixAsync(Document document, PropertyDeclarationSyntax invocationExpr, CancellationToken cancellationToken)
         {
-            // Create a new list of arguments with System.StringComparison.Ordinal
-            var arguments = invocationExpr.ArgumentList.AddArguments(
-                Argument(
-                        MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            QualifiedName(IdentifierName("System"), IdentifierName("StringComparison")),
-                            IdentifierName("Ordinal"))));
+            //// Create a new list of arguments with System.StringComparison.Ordinal
+            //invocationExpr.InsertTriviaAfter(Trivia(new xml));
+            //var arguments = invocationExpr.ArgumentList.AddArguments(
+            //    Argument(
+            //            MemberAccessExpression(
+            //                SyntaxKind.SimpleMemberAccessExpression,
+            //                QualifiedName(IdentifierName("System"), IdentifierName("StringComparison")),
+            //                IdentifierName("Ordinal"))));
 
-            // Indicate to format the list with the current coding style
-            var formattedLocal = arguments.WithAdditionalAnnotations(Formatter.Annotation);
+            //// Indicate to format the list with the current coding style
+            //var formattedLocal = arguments.WithAdditionalAnnotations(Formatter.Annotation);
+
+            //// Replace the old local declaration with the new local declaration.
+            //var oldRoot = await document.GetSyntaxRootAsync(cancellationToken);
+            //var newRoot = oldRoot.ReplaceNode(invocationExpr.ArgumentList, formattedLocal);
+
+            //return document.WithSyntaxRoot(newRoot);
+
+            var testDocumentation = DocumentationCommentTrivia(
+    SyntaxKind.SingleLineDocumentationCommentTrivia,
+    List(
+        new XmlNodeSyntax[]{
+            XmlText()
+            .WithTextTokens(
+                TokenList(
+                    XmlTextLiteral(
+                        TriviaList(
+                            DocumentationCommentExterior("///")),
+                        " ",
+                        " ",
+                        TriviaList()))),
+            XmlElement(
+                XmlElementStartTag(
+                    XmlName(
+                        Identifier("summary"))),
+                XmlElementEndTag(
+                    XmlName(
+                        Identifier("summary"))))
+            .WithContent(
+                SingletonList<XmlNodeSyntax>(
+                    XmlText()
+                    .WithTextTokens(
+                        TokenList(
+                            XmlTextLiteral(
+                                TriviaList(),
+                                "test",
+                                "test",
+                                TriviaList()))))),
+            XmlText()
+            .WithTextTokens(
+                TokenList(
+                    XmlTextNewLine(
+                        TriviaList(),
+                        "\n",
+                        "\n",
+                        TriviaList())))}));
+
+
+            var newMethodNode = invocationExpr.WithModifiers(
+    TokenList(
+        new[]{
+            Token(
+                TriviaList(
+                    Trivia(testDocumentation)), // xmldoc
+                    SyntaxKind.PublicKeyword, // original 1st token
+                    TriviaList()),
+            Token(SyntaxKind.StaticKeyword)}));
 
             // Replace the old local declaration with the new local declaration.
             var oldRoot = await document.GetSyntaxRootAsync(cancellationToken);
-            var newRoot = oldRoot.ReplaceNode(invocationExpr.ArgumentList, formattedLocal);
+            var newRoot = oldRoot.ReplaceNode(invocationExpr, newMethodNode);
 
             return document.WithSyntaxRoot(newRoot);
         }

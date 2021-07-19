@@ -20,17 +20,13 @@ namespace AutoGenrateComment.Test
             var test = @"
 class TypeName
 {
-    public void Test()
-    {
-        var a = ""fuck you"";
-        string.Equals(a, ""fuck you"");
-    }
+    public string MyProperty { get; set; }
 }";
 
             var expected = VerifyCS.Diagnostic("AutoGenrateComment")
-                .WithSpan(7, 9, 7, 37)
+                .WithSpan(3, 5, 3, 43)
                 .WithSeverity(DiagnosticSeverity.Info)
-                .WithMessage("StringComparison is missing");
+                .WithMessage("加入{0}註解");
 
             await VerifyCS.VerifyAnalyzerAsync(test, expected);
         }

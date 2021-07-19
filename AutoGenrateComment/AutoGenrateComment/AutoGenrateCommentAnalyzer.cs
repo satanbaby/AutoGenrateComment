@@ -34,40 +34,50 @@ namespace AutoGenrateComment
             // TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
             // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
             //context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
-            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.PropertyKeyword);
         }
 
         private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
-            var invocationExpr = (InvocationExpressionSyntax)context.Node;
+            var invocationExpr = (PropertyDeclarationSyntax)context.Node;
+
+            if (invocationExpr.ContainsAnnotations)
+            {
+                return;
+            }
+
+            var diagnostic = Diagnostic.Create(Rule, invocationExpr.GetLocation());
+            context.ReportDiagnostic(diagnostic);
+
+
 
             // invocationExpr.Expression is the expression before "(", here "string.Equals".
             // In this case it should be a MemberAccessExpressionSyntax, with a member name "Equals"
-            var memberAccessExpr = invocationExpr.Expression as MemberAccessExpressionSyntax;
-            if (memberAccessExpr == null)
-                return;
+            //var memberAccessExpr = invocationExpr.Expression as MemberAccessExpressionSyntax;
+            //if (memberAccessExpr == null)
+            //    return;
 
-            if (memberAccessExpr.Name.ToString() != nameof(string.Equals))
-                return;
+            //if (memberAccessExpr.Name.ToString() != nameof(string.Equals))
+            //    return;
 
-            // Now we need to get the semantic model of this node to get the type of the node
-            // So, we can check it is of type string whatever the way you define it (string or System.String)
-            var memberSymbol = context.SemanticModel.GetSymbolInfo(memberAccessExpr).Symbol as IMethodSymbol;
-            if (memberSymbol == null)
-                return;
+            //// Now we need to get the semantic model of this node to get the type of the node
+            //// So, we can check it is of type string whatever the way you define it (string or System.String)
+            //var memberSymbol = context.SemanticModel.GetSymbolInfo(memberAccessExpr).Symbol as IMethodSymbol;
+            //if (memberSymbol == null)
+            //    return;
 
-            // Check the method is a member of the class string
-            if (memberSymbol.ContainingType.SpecialType != SpecialType.System_String)
-                return;
+            //// Check the method is a member of the class string
+            //if (memberSymbol.ContainingType.SpecialType != SpecialType.System_String)
+            //    return;
 
-            // If there are not 3 arguments, the comparison type is missing => report it
-            // We could improve this validation by checking the types of the arguments, but it would be a little longer for this post.
-            var argumentList = invocationExpr.ArgumentList;
-            if ((argumentList?.Arguments.Count ?? 0) == 2)
-            {
-                var diagnostic = Diagnostic.Create(Rule, invocationExpr.GetLocation());
-                context.ReportDiagnostic(diagnostic);
-            }
+            //// If there are not 3 arguments, the comparison type is missing => report it
+            //// We could improve this validation by checking the types of the arguments, but it would be a little longer for this post.
+            //var argumentList = invocationExpr.ArgumentList;
+            //if ((argumentList?.Arguments.Count ?? 0) == 2)
+            //{
+            //    var diagnostic = Diagnostic.Create(Rule, invocationExpr.GetLocation());
+            //    context.ReportDiagnostic(diagnostic);
+            //}
         }
     }
 }
